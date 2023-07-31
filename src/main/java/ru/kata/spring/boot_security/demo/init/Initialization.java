@@ -58,22 +58,24 @@ public class Initialization {
 
     private List<User> createUsers() {
         List<User> userList = new ArrayList<>();
-        User user = new User();
-        user.setUsername("user");
-        user.setPassword(passwordEncoder.encode("user"));
-        user.setFirstName("Noname");
-        user.setLastName("Whocares");
-        user.setRoles(roles.stream().filter(r -> r.getName().equals("ROLE_USER")).collect(Collectors.toList()));
-        userList.add(user);
-
 
         User admin = new User();
         admin.setUsername("admin");
         admin.setPassword(passwordEncoder.encode("admin"));
         admin.setFirstName("Mr");
         admin.setLastName("Gigachad");
-        user.setRoles(roles.stream().filter(r -> r.getName().equals("ROLE_ADMIN")).collect(Collectors.toList()));
+        admin.setRoles(roles.stream().filter(r -> r.getName().equals("ROLE_ADMIN")).collect(Collectors.toList()));
+        admin.getRoles().stream().forEach(r -> r.setUsers(List.of(admin)));
         userList.add(admin);
+
+        User user = new User();
+        user.setUsername("user");
+        user.setPassword(passwordEncoder.encode("user"));
+        user.setFirstName("Noname");
+        user.setLastName("Whocares");
+        user.setRoles(roles.stream().filter(r -> r.getName().equals("ROLE_USER")).collect(Collectors.toList()));
+        user.getRoles().stream().forEach(r -> r.setUsers(List.of(user)));
+        userList.add(user);
 
         return userList;
     }
