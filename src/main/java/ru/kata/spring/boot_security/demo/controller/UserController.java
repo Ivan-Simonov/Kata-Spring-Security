@@ -23,7 +23,7 @@ public class UserController {
 
     @GetMapping()
     public String showUserByIdForUser(Principal principal, Model model) {
-        User user = (User) userService.loadUserByUsername(principal.getName());
+        User user = userService.findUserByUsername(principal.getName());
         model.addAttribute("user", user);
         return "user/show";
     }
