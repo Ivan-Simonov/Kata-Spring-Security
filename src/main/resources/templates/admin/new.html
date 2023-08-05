@@ -14,10 +14,12 @@
     <input type="text" th:field="*{lastName}" id="lastName"/>
     <br/>
     <label for="username">Enter username:</label>
-    <input type="text" th:field="*{username}" id="username"/>
+    <input type="text" th:field="*{email}" id="username"/>
+    <a th:style="'color: red'" th:if="${#fields.hasErrors('email')}") th:errors="*{email}"></a>
     <br/>
     <label for="password">Enter password:</label>
     <input type="text" th:field="*{password}" id="password"/>
+    <a th:style="'color: red'" th:if="${#fields.hasErrors('password')}") th:errors="*{password}"></a>
     <br/>
     <label for="roles">Roles:</label>
     <br/>
@@ -25,7 +27,7 @@
         <option th:each="role : ${roles}"
                 th:value="${role.getId()}"
                 th:field="*{roles}"
-                th:selected="${user.getRoles().contains(role)}"
+                th:size="${roles.size()}"
                 th:text="${role.getName().substring(5)}">VALUE</option>
     </select>
     <br/>
