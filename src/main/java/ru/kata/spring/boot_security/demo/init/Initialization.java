@@ -60,19 +60,21 @@ public class Initialization {
         List<User> userList = new ArrayList<>();
 
         User admin = new User();
-        admin.setUsername("admin");
+        admin.setEmail("admin@mail.com");
         admin.setPassword(passwordEncoder.encode("admin"));
         admin.setFirstName("Mr");
         admin.setLastName("Gigachad");
+        admin.setAge(9999);
         admin.setRoles(roles.stream().filter(r -> r.getName().equals("ROLE_ADMIN")).collect(Collectors.toList()));
         admin.getRoles().stream().forEach(r -> r.setUsers(List.of(admin)));
         userList.add(admin);
 
         User user = new User();
-        user.setUsername("user");
+        user.setEmail("user@mail.com");
         user.setPassword(passwordEncoder.encode("user"));
         user.setFirstName("Noname");
         user.setLastName("Whocares");
+        user.setAge(21);
         user.setRoles(roles.stream().filter(r -> r.getName().equals("ROLE_USER")).collect(Collectors.toList()));
         user.getRoles().stream().forEach(r -> r.setUsers(List.of(user)));
         userList.add(user);

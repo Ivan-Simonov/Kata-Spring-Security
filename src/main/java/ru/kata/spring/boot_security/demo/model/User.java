@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -17,14 +18,16 @@ public class User implements UserDetails {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "email")
+    private String email;
     @Column(name = "password")
     private String password;
     @Column(name = "first_name")
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
+    @Column(name = "age")
+    private Integer age;
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "users_id"), inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private List<Role> roles;
@@ -33,8 +36,12 @@ public class User implements UserDetails {
         return id;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public void setPassword(String password) {
@@ -57,12 +64,28 @@ public class User implements UserDetails {
         this.lastName = lastName;
     }
 
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
     public List<Role> getRoles() {
         return roles;
     }
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
+    }
+
+    public String getRoleNames() {
+        return roles.stream().map(r -> r.getName().substring(5)).collect(Collectors.joining(" "));
+    }
+
+    public boolean isAdmin() {
+        return getRoles().stream().anyMatch(r -> r.getName().equals("ROLE_ADMIN"));
     }
 
     @Override
@@ -75,9 +98,8 @@ public class User implements UserDetails {
         return password;
     }
 
-    @Override
     public String getUsername() {
-        return username;
+        return getEmail();
     }
 
     @Override
