@@ -19,6 +19,14 @@
     <label for="password">Enter password:</label>
     <input type="text" th:field="*{password}" id="password"/>
     <br/>
+    <select class="form-control" id="roles" name="roles" multiple="multiple">
+        <option th:each="role : ${roles}"
+                th:value="${role.getId()}"
+                th:field="*{roles}"
+                th:selected="${user.getRoles().contains(role)}"
+                th:text="${role.getName().substring(5)}">VALUE</option>
+    </select>
+    <br/>
     <input type="submit" value="Save">
 </form>
 <a th:href="@{/admin/{id}(id=${user.getId()})}" th:text="'Back'">value</a>

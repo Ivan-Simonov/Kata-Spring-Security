@@ -52,6 +52,7 @@ public class UserServiceImpl {
         userStored.setFirstName(user.getFirstName());
         userStored.setLastName(user.getLastName());
         userStored.setUsername(user.getUsername());
+        userStored.setRoles(user.getRoles());
         if (!userStored.getPassword().equals(user.getPassword())) {
             userStored.setPassword(passwordEncoder.encode(user.getPassword()));
         }
@@ -59,8 +60,10 @@ public class UserServiceImpl {
     }
 
     public void createNewUser(User user) {
-        Role role = roleRepository.findByName("ROLE_USER");
-        user.setRoles(List.of(role));
+        if (user.getRoles().isEmpty()) {
+            Role role = roleRepository.findByName("ROLE_USER");
+            user.setRoles(List.of(role));
+        }
         save(user);
     }
 
