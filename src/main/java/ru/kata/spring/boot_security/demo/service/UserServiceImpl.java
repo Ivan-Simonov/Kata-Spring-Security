@@ -31,6 +31,7 @@ public class UserServiceImpl {
     }
 
     public void save(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.saveAndFlush(user);
     }
 
@@ -57,15 +58,17 @@ public class UserServiceImpl {
         userStored.setEmail(user.getEmail());
         userStored.setRoles(user.getRoles());
         userStored.setAge(user.getAge());
-        if(user.getPassword() != null && !user.getPassword().isEmpty()) {
+        if(user.getPassword() != null && !user.getPassword().isEmpty() && !userStored.getPassword().equals(user.getPassword())) {
             userStored.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         userRepository.save(userStored);
     }
 
     public void createNewUser(User user) {
-        Role role = roleRepository.findByName("ROLE_USER");
-        user.setRoles(List.of(role));
+        if (user.getRoles().isEmpty()) {
+            Role role = roleRepository.findByName("ROLE_USER");
+            user.setRoles(List.of(role));
+        }
         save(user);
     }
 }

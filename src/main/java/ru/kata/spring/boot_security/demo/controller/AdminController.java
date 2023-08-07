@@ -16,6 +16,7 @@ public class AdminController {
 
     private final UserServiceImpl userService;
     private final RoleServiceImpl roleService;
+    private static final String ADMIN_REDIRECT_ADDRESS = "redirect:/admin";
 
     @Autowired
     public AdminController(UserServiceImpl userService, RoleServiceImpl roleService) {
@@ -36,18 +37,18 @@ public class AdminController {
     @PostMapping()
     public String create(@ModelAttribute User user) {
         userService.createNewUser(user);
-        return "redirect:/admin";
+        return ADMIN_REDIRECT_ADDRESS;
     }
 
     @PatchMapping("/{id}")
     public String updateUser(@ModelAttribute("updatedUser") User user, @PathVariable("id") Long id) {
         userService.update(id, user);
-        return "redirect:/admin";
+        return ADMIN_REDIRECT_ADDRESS;
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") Long id) {
         userService.delete(id);
-        return "redirect:/admin";
+        return ADMIN_REDIRECT_ADDRESS;
     }
 }
