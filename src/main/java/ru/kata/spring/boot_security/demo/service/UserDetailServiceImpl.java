@@ -7,10 +7,11 @@ import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
 @Service
-public class UserDetailService implements UserDetailsService {
+public class UserDetailServiceImpl implements UserDetailsService {
+
     private final UserRepository userRepository;
 
-    public UserDetailService(UserRepository userRepository) {
+    public UserDetailServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

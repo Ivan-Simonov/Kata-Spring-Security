@@ -4,9 +4,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -19,8 +20,10 @@ public class User implements UserDetails {
     private Long id;
 
     @Column(name = "email")
+    @NotBlank(message = "Email is mandatory")
     private String email;
     @Column(name = "password")
+    @NotBlank(message = "Password is mandatory")
     private String password;
     @Column(name = "first_name")
     private String firstName;
@@ -28,9 +31,9 @@ public class User implements UserDetails {
     private String lastName;
     @Column(name = "age")
     private Integer age;
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "users_id"), inverseJoinColumns = @JoinColumn(name = "roles_id"))
-    private List<Role> roles;
+    private Set<Role> roles;
 
     public Long getId() {
         return id;
@@ -72,11 +75,11 @@ public class User implements UserDetails {
         this.age = age;
     }
 
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 
@@ -90,7 +93,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles;
+        return getRoles();
     }
 
     @Override
@@ -127,11 +130,17 @@ public class User implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id);
+        return id != null && Objects.equals(id, user.id);
     }
 
+    /**
+     * Id is generated at the moment we persist the entity.
+     * That means we might have change in generating hashcode based on id during the lifetime of an object.
+     * Which violates the consistency of the method. We do not want that.
+     * That is why we return constant which negatively affects the hash-based functions, but allows us to retain consistency
+     * */
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return 1337;
     }
 }

@@ -3,10 +3,14 @@ package ru.kata.spring.boot_security.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.service.RoleServiceImpl;
-import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
+import ru.kata.spring.boot_security.demo.service.RoleService;
+import ru.kata.spring.boot_security.demo.service.UserService;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import java.security.Principal;
 
@@ -14,12 +18,12 @@ import java.security.Principal;
 @RequestMapping("/admin")
 public class AdminController {
 
-    private final UserServiceImpl userService;
-    private final RoleServiceImpl roleService;
+    private final UserService userService;
+    private final RoleService roleService;
     private static final String ADMIN_REDIRECT_ADDRESS = "redirect:/admin";
 
     @Autowired
-    public AdminController(UserServiceImpl userService, RoleServiceImpl roleService) {
+    public AdminController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
     }
@@ -35,13 +39,20 @@ public class AdminController {
     }
 
     @PostMapping()
-    public String create(@ModelAttribute User user) {
+    public String create(@ModelAttribute @Valid User user, Errors errors, ModelMap modelMap) {
+        if(errors.hasErrors()) {
+            modelMap.addAttribute("roles", roleService.getAllRoles());
+            return "admin/new";
+        }
         userService.createNewUser(user);
         return ADMIN_REDIRECT_ADDRESS;
     }
 
     @PatchMapping("/{id}")
-    public String updateUser(@ModelAttribute("updatedUser") User user, @PathVariable("id") Long id) {
+    public String updateUser(@ModelAttribute("updatedUser") @Valid User user, Errors errors, @PathVariable("id") Long id, ModelMap modelMap, HttpServletRequest request) {
+        if (errors.hasErrors()) {
+            return "redirect:" + request.getHeader("Referer");
+        }
         userService.update(id, user);
         return ADMIN_REDIRECT_ADDRESS;
     }

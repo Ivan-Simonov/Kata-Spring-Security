@@ -11,9 +11,10 @@ import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -26,31 +27,28 @@ public class UserServiceImpl {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User findUserByEmail(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(String.format("Username %s not found", email)));
-    }
-
+    @Override
     public void save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.saveAndFlush(user);
     }
 
+    @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public void saveAll(List<User> users) {
-        userRepository.saveAllAndFlush(users);
-    }
-
+    @Override
     public void delete(Long id) {
         userRepository.deleteById(id);
     }
 
+    @Override
     public User findById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new IllegalIdentifierException(String.format("No user found for id = %s", id)));
     }
 
+    @Override
     public void update(Long id, User user) {
         User userStored = userRepository.findById(id).orElse(user);
         userStored.setFirstName(user.getFirstName());
@@ -64,11 +62,17 @@ public class UserServiceImpl {
         userRepository.save(userStored);
     }
 
+    @Override
     public void createNewUser(User user) {
         if (user.getRoles().isEmpty()) {
             Role role = roleRepository.findByName("ROLE_USER");
-            user.setRoles(List.of(role));
+            user.setRoles(Set.of(role));
         }
         save(user);
+    }
+
+    @Override
+    public User findUserByEmail(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(String.format("Username %s not found", email)));
     }
 }
