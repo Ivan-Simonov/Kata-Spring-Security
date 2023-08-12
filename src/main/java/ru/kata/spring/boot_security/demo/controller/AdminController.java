@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import java.security.Principal;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -39,18 +40,22 @@ public class AdminController {
     }
 
     @PostMapping()
-    public String create(@ModelAttribute @Valid User user, Errors errors, ModelMap modelMap) {
+    public String create(Principal principal, @ModelAttribute @Valid User user, Errors errors, ModelMap model) {
         if(errors.hasErrors()) {
-            modelMap.addAttribute("roles", roleService.getAllRoles());
-            return "admin/new";
+            model.addAttribute("users", userService.getAllUsers());
+            User currentUser = userService.findUserByEmail(principal.getName());
+            model.addAttribute("currentUser", currentUser);
+            model.addAttribute("allRoles", roleService.getAllRoles());
+            model.addAttribute("newUser", new User());
+            return "admin/admin";
         }
         userService.createNewUser(user);
         return ADMIN_REDIRECT_ADDRESS;
     }
 
     @PatchMapping("/{id}")
-    public String updateUser(@ModelAttribute("updatedUser") @Valid User user, Errors errors, @PathVariable("id") Long id, ModelMap modelMap, HttpServletRequest request) {
-        if (errors.hasErrors()) {
+    public String updateUser(@ModelAttribute("updatedUser") @Valid User user, Errors errors, @PathVariable("id") Long id, HttpServletRequest request) {
+        if (!(errors.getFieldErrors().stream().filter(e -> !e.getField().equals("password")).collect(Collectors.toList())).isEmpty()) {
             return "redirect:" + request.getHeader("Referer");
         }
         userService.update(id, user);

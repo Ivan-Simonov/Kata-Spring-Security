@@ -294,6 +294,8 @@
                                             <label for="passwordNew"><b>Password</b></label>
                                             <input th:name="password" type="password"
                                                    class="form-control" id="passwordNew"/>
+                                            <small class="text-danger" th:if="${#fields.hasErrors('password')}"
+                                                   th:errors="*{password}">error</small>
                                             <br>
                                             <label for="rolesNew"><b>Role</b></label>
                                             <select class="form-control" id="rolesNew"
