@@ -15,7 +15,7 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "user_id")
     private Long id;
 
     @Column(name = "email")
@@ -30,8 +30,7 @@ public class User implements UserDetails {
     private String lastName;
     @Column(name = "age")
     private Integer age;
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
-    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "users_id"), inverseJoinColumns = @JoinColumn(name = "roles_id"))
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "users")
     private Set<Role> roles;
 
     public Long getId() {
