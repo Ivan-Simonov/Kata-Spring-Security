@@ -19,13 +19,13 @@
     <label for="password">Enter password:</label>
     <input type="text" th:field="*{password}" id="password"/>
     <br/>
-    <select class="form-control" id="roles" name="roles" multiple="multiple">
-        <option th:each="role : ${roles}"
-                th:value="${role.getId()}"
-                th:field="*{roles}"
-                th:selected="${user.getRoles().contains(role)}"
-                th:text="${role.getName().substring(5)}">VALUE</option>
-    </select>
+    <div class="form-group">
+        <label>Select roles:</label>
+        <br/>
+        <select id="roles" name="roles" th:field="*{roles}" class="form-control" multiple="multiple"/>
+        <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.getName().substring(5)}" th:selected="${user.getRoles().contains(role)}"></option>
+        </select>
+    </div>
     <br/>
     <input type="submit" value="Save">
 </form>
