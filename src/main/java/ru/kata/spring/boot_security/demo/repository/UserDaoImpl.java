@@ -22,7 +22,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     @Transactional (readOnly = true)
     public Optional<User> findByEmail(String email) {
-        TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery("from User u join fetch u.roles where u.email = :email");
+        TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery("FROM User u WHERE u.email = :email");
         query.setParameter("email", email);
         return Optional.of(query.getSingleResult());
     }
@@ -30,7 +30,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     @Transactional (readOnly = true)
     public Optional<User> findById(Long id) {
-        TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery("from User u join fetch u.roles where u.id = :id");
+        TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery("FROM User u WHERE u.id = :id");
         query.setParameter("id", id);
         return Optional.of(query.getSingleResult());
     }
@@ -44,7 +44,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     @Transactional(readOnly = true)
     public List<User> findAll() {
-        TypedQuery<User> query=sessionFactory.getCurrentSession().createQuery("from User");
+        TypedQuery<User> query=sessionFactory.getCurrentSession().createQuery("FROM User");
         return query.getResultList();
     }
 

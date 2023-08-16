@@ -2,10 +2,13 @@ package ru.kata.spring.boot_security.demo.model;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.Objects;
@@ -32,9 +35,11 @@ public class User implements UserDetails {
     @Column(name = "last_name")
     private String lastName;
     @Column(name = "age")
+    @Min(0)
     private Integer age;
     @ManyToMany
     @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.MERGE, CascadeType.PERSIST})
+    @Fetch(FetchMode.JOIN)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
