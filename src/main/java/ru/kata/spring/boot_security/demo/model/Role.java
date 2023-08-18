@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.model;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
@@ -22,6 +23,7 @@ public class Role implements GrantedAuthority {
 
     @ManyToMany
     @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.MERGE, CascadeType.PERSIST})
+    @JsonBackReference
     private Set<User> users;
 
     public Role() {}

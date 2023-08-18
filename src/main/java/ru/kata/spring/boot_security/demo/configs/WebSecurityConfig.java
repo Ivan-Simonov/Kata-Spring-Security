@@ -27,12 +27,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors()
-                .and()
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .and()
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/users/**").hasAnyRole("ADMIN", "USER")
-                .antMatchers("/", "/error").permitAll()
+                .antMatchers("/error").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .successHandler(successUserHandler)
