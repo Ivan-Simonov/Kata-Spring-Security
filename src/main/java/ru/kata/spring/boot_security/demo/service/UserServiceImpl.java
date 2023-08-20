@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void reloadRoles(User user) {
-        List<Role> roles = user.getRoles().stream().map(role -> roleDao.findById(Long.valueOf(role.getName())).get()).toList();
+        List<Role> roles = user.getRoles().stream().map(role -> roleDao.findById(role.getId()).get()).toList();
         user.getRoles().clear();
         user.getRoles().addAll(roles);
     }

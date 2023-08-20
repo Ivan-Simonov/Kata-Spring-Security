@@ -55,7 +55,7 @@ public class UserDaoImpl implements UserDao {
         if (user.isEmpty()) {
             throw new IllegalIdentifierException("Could not find the user with id: " + id);
         } else {
-            sessionFactory.getCurrentSession().delete(user);
+            sessionFactory.getCurrentSession().delete(user.get());
         }
     }
 }
