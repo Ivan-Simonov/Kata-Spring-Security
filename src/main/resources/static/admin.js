@@ -1,19 +1,19 @@
 let userInfo = "http://localhost:8080/api/admin/info";
-currentUser = fetch(userInfo).then((response) => response.json())
 const urlAllUser = "http://localhost:8080/api/admin/users"
+const urlSingleUser = "http://localhost:8080/api/admin/user/"
 const urlPost = "http://localhost:8080/api/admin/add"
-const urlPATCH = "http://localhost:8080/api/admin/update"
+const urlPatch = "http://localhost:8080/api/admin/update"
 const urlDelete = "http://localhost:8080/api/admin/delete/"
-const urlRole = "http://localhost:8080/api/admin/roles"
-const listRoles = fetch(urlRole).then(response => response.json())
+const urlRoles = "http://localhost:8080/api/admin/roles"
+let editId = document.getElementById("id_edit")
+let editFirstName = document.getElementById("firstName_edit")
+let editLastName = document.getElementById("lastName_edit")
+let editAge = document.getElementById("age_edit")
+let editEmail = document.getElementById("email_edit")
+let editPassword = document.getElementById("password_edit")
+let editRole = document.getElementById("role_edit")
+const listRoles = fetch(urlRoles).then(response => response.json())
 const editUserModal = new bootstrap.Modal(document.getElementById("editUserModal"))
-const editId = document.getElementById("id_edit")
-const editFirstName = document.getElementById("firstName_edit")
-const editLastName = document.getElementById("lastName_edit")
-const editAge = document.getElementById("age_edit")
-const editEmail = document.getElementById("email_edit")
-const editPassword = document.getElementById("password_edit")
-const editRole = document.getElementById("role_edit")
 const formEdit = document.getElementById("edit_user_form")
 const deleteModalBtn = new bootstrap.Modal(document.getElementById("deleteUserModal"))
 
@@ -49,12 +49,11 @@ fetch(urlAllUser)
 function generateUsersTable(table, data) {
     for (let element of data) {
         let row = table.insertRow();
-        for (key in element) {
+        for (let key in element) {
             let cell = row.insertCell();
             let text = document.createTextNode(element[key]);
             cell.appendChild(text);
         }
-        let editButton = '<button type="button" class="btn btn-info btn-sm text-white" id="editUserBtn">Edit</button>'
         addButton(row.insertCell(), "Edit", "btn btn-sm btn-primary", "editUserBtn")
         addButton(row.insertCell(), "Delete", "btn btn-sm btn-danger", "deleteUserBtn")
     }
@@ -98,13 +97,14 @@ document.getElementById("newUserForm")
         let nameRole = document.getElementById("role_select")
         let listRoles = []
         let roleValue = ""
-        for (let i = 0; i < nameRole.options.length; i++) {
-            if (nameRole.options[i].selected) {
+
+        for (let option of nameRole.options) {
+            if (option.selected) {
                 listRoles.push({
-                    id: nameRole.options[i].value,
-                    role: "ROLE_" + nameRole.options[i].innerHTML
+                    id: option.value,
+                    role: "ROLE_" + option.innerHTML
                 })
-                roleValue += nameRole.options[i].innerHTML + ''
+                roleValue += option.innerHTML + ''
             }
         }
         fetch(urlPost, {
@@ -126,12 +126,11 @@ document.getElementById("newUserForm")
         document.getElementById("userTable-tab").click()
     })
 
-//модальное окно Edit
 on(document, 'click', '#editUserBtn', e => {
     const fila = e.parentNode.parentNode
     let option = ''
     editId.value = fila.children[0].innerHTML
-    let urlEditUser = "http://localhost:8080/api/admin/user/" + editId.value;
+    let urlEditUser = urlSingleUser + editId.value;
     fetch(urlEditUser, {
         method: "GET"
     }).then((response) => {
@@ -161,14 +160,14 @@ formEdit.addEventListener('submit', e => {
     let listRoleEdit = []
     let roleValueEdit = ''
 
-    for (let i = 0; i < nameRoleEdit.options.length; i++) {
-        if (nameRoleEdit.options[i].selected) {
-            listRoleEdit.push({id: nameRoleEdit.options[i].value, role: 'ROLE_' + nameRoleEdit.options[i].innerHTML})
-            roleValueEdit += nameRoleEdit.options[i].innerHTML + ' '
+    for (let option of nameRoleEdit.options) {
+        if (option.selected) {
+            listRoleEdit.push({id: option.value, role: 'ROLE_' + option.innerHTML})
+            roleValueEdit += option.innerHTML + ' '
         }
     }
 
-    fetch(urlPATCH, {
+    fetch(urlPatch, {
         method: "PATCH",
         headers: {
             'Content-Type': 'application/json'
@@ -184,6 +183,7 @@ formEdit.addEventListener('submit', e => {
         })
     })
     editUserModal.hide()
+    location.reload()
 })
 
 
@@ -191,7 +191,7 @@ let rowDelete = null
 on(document, 'click', '#deleteUserBtn', e => {
     rowDelete = e.parentNode.parentNode
     let deleteId = rowDelete.children[0].innerHTML;
-    let urlDeleteUser = "http://localhost:8080/api/admin/user/" + deleteId;
+    let urlDeleteUser = urlSingleUser + deleteId;
     fetch(urlDeleteUser, {
         method: "GET"
     }).then((response) => {
