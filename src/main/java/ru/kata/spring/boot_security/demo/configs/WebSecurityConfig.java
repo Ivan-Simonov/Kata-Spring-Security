@@ -29,16 +29,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .cors()
                 .and()
+                .csrf()
+                .ignoringAntMatchers("/login", "/logout")
+                .and()
                 .authorizeRequests()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/users/**").hasAnyRole("ADMIN", "USER")
                 .antMatchers("/", "/error").permitAll()
                 .and()
                 .formLogin()
+                .loginPage("/login")
                 .successHandler(successUserHandler)
                 .permitAll()
                 .and()
-                .logout().logoutUrl("/logout").logoutSuccessUrl("/")
+                .logout().logoutUrl("/logout")
+                .permitAll()
+                .logoutSuccessUrl("/")
                 .permitAll();
     }
 
