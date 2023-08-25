@@ -25,26 +25,38 @@ fetch(userInfo)
         document.getElementById("navbar-info").append(data.email + " with roles: " + data.roleNames);
     })
 
-fetch(urlAllUser)
-    .then((response) => {
-        return response.json();
-    })
-    .then((users) => {
-        let table = document.getElementById("table-list-users");
-        let tableFiller = [];
-        for (let user of users) {
-            let userData = {
-                id: user.id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                age: user.age,
-                email: user.email,
-                roles: user.roleNames
+fillUserTableData()
+
+function fillUserTableData() {
+    fetch(urlAllUser)
+        .then((response) => {
+            return response.json();
+        })
+        .then((users) => {
+            let table = document.getElementById("table-list-users-body");
+            let tableFiller = [];
+            for (let user of users) {
+                let userData = {
+                    id: user.id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    age: user.age,
+                    email: user.email,
+                    roles: user.roleNames
+                }
+                tableFiller.push(userData);
             }
-            tableFiller.push(userData);
-        }
-        generateUsersTable(table, tableFiller)
-    })
+            generateUsersTable(table, tableFiller)
+        })
+}
+
+function reloadUserTableData() {
+    let table = document.getElementById("table-list-users-body");
+    while (table.firstChild) {
+        table.removeChild(table.lastChild);
+    }
+    fillUserTableData();
+}
 
 function generateUsersTable(table, data) {
     for (let element of data) {
@@ -122,8 +134,9 @@ document.getElementById("newUserForm")
             })
         }).then(() => {
             newUserForm.reset()
+            reloadUserTableData()
+            document.getElementById("userTable-tab").click()
         })
-        document.getElementById("userTable-tab").click()
     })
 
 on(document, 'click', '#editUserBtn', e => {
