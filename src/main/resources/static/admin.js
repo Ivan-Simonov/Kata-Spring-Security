@@ -181,22 +181,24 @@ formEdit.addEventListener('submit', e => {
     }
 
     fetch(urlPatch, {
-        method: "PATCH",
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            id: editId.value,
-            firstName: editFirstName.value,
-            lastName: editLastName.value,
-            email: editEmail.value,
-            age: editAge.value,
-            password: editPassword.value,
-            roles: listRoleEdit
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: editId.value,
+                firstName: editFirstName.value,
+                lastName: editLastName.value,
+                email: editEmail.value,
+                age: editAge.value,
+                password: editPassword.value,
+                roles: listRoleEdit
+            })
         })
+        .then(() => {
+        editUserModal.hide()
+        location.reload()
     })
-    editUserModal.hide()
-    location.reload()
 })
 
 

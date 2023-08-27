@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.repository;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.model.naming.IllegalIdentifierException;
+import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.model.User;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +23,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     @Transactional (readOnly = true)
     public Optional<User> findByEmail(String email) {
-        TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery("FROM User u WHERE u.email = :email");
+        TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery("FROM User u JOIN FETCH u.roles r WHERE u.email = :email");
         query.setParameter("email", email);
         return Optional.of(query.getSingleResult());
     }
@@ -30,7 +31,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     @Transactional (readOnly = true)
     public Optional<User> findById(Long id) {
-        TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery("FROM User u WHERE u.id = :id");
+        TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery("FROM User u JOIN FETCH u.roles r WHERE u.id = :id");
         query.setParameter("id", id);
         return Optional.of(query.getSingleResult());
     }
@@ -44,7 +45,8 @@ public class UserDaoImpl implements UserDao {
     @Override
     @Transactional(readOnly = true)
     public List<User> findAll() {
-        TypedQuery<User> query=sessionFactory.getCurrentSession().createQuery("FROM User");
+        TypedQuery<User> query=sessionFactory.getCurrentSession().createQuery("SELECT DISTINCT u FROM User u JOIN FETCH u.roles r ORDER BY u.id ASC");
+        query.setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false);
         return query.getResultList();
     }
 
